@@ -1,0 +1,141 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./dist/output.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&family=Poppins:wght@300&family=Roboto:wght@300;400&display=swap"
+        rel="stylesheet">
+    <title>Password Generator</title>
+</head>
+
+<body class="font-[Montserrat] bg-blue-50">
+    <div class="h-screen w-full flex justify-center items-center">
+        <div class="w-1/4 h-3/5">
+            <h1 class="text-center text-xl mb-5">Password Generator</h1>
+            <div class="flex items-center pl-4 mb-1 bg-white rounded-sm shadow-sm">
+                <input id="numbers" type="checkbox" value="numbers" name="bordered-checkbox"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="bordered-checkbox-1"
+                    class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Numbers</label>
+            </div>
+            <div class="flex items-center pl-4 mb-1 bg-white rounded-sm shadow-sm">
+                <input id="lowercase" type="checkbox" value="lowercase" name="bordered-checkbox"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="bordered-checkbox-2"
+                    class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">lowercase</label>
+            </div>
+            <div class="flex items-center pl-4 mb-1 bg-white rounded-sm shadow-sm">
+                <input id="symbols" type="checkbox" value="lowercase" name="bordered-checkbox"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="bordered-checkbox-2"
+                    class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Symbols</label>
+            </div>
+            <div class="flex items-center pl-4 bg-white rounded-sm mb-5 shadow-sm">
+                <input id="uppercase" type="checkbox" value="uppercase" name="bordered-checkbox"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="bordered-checkbox-3"
+                    class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">UPPERCASE</label>
+            </div>
+            <div class="w-full bg-white rounded-sm p-5 h-40 shadow-sm mb-5">
+                <h2 class="text-lg mb-3">Generated Password:</h2>
+                <p id="result" class="text-md text-center"></p>
+            </div>
+            <div class="flex space-x-4 items-center justify-center mb-5">
+                <button
+                    class="bg-white hover:bg-blue-400 hover:text-white text-gray-800 font-semibold py-2 px-4 rounded shadow"
+                    id="generate">
+                    Generate
+                </button>
+                <button
+                    class="bg-white hover:bg-blue-400 hover:text-white text-gray-800 font-semibold py-2 px-4 rounded shadow"
+                    id="copy">
+                    Copy
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const numbers = document.getElementById('numbers');
+        const lower = document.getElementById('lowercase');
+        const upper = document.getElementById('uppercase');
+        const symbols = document.getElementById('symbols');
+        const generateButton = document.getElementById('generate');
+        const copyButton = document.getElementById('copy');
+        const resultParagraph = document.getElementById('result');
+
+        // Add event listeners to the radio buttons
+        generateButton.addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent form submission if the button is in a form
+            generatePassword();
+        });
+
+        function generatePassword() {
+            // Check if at least one checkbox is checked
+            if (lower.checked || upper.checked || numbers.checked || symbols.checked) {
+                const lowercased = 'abcdefghijklmnopqrstuvwxyz';
+                const uppercased = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                const symbolschars = './;[]-_';
+                const numberschars = '0123456789';
+
+                let characters = '';
+
+                // Add selected character sets based on checkboxes
+                if (lower.checked) {
+                    characters += lowercased;
+                }
+                if (upper.checked) {
+                    characters += uppercased;
+                }
+                if (numbers.checked) {
+                    characters += numberschars;
+                }
+                if (symbols.checked) {
+                    characters += symbolschars;
+                }
+
+                // Generate the password
+                const passwordLength = 12; // You can adjust the length as needed
+                let generatedPassword = '';
+
+                for (let i = 0; i < passwordLength; i++) {
+                    const randomIndex = Math.floor(Math.random() * characters.length);
+                    generatedPassword += characters.charAt(randomIndex);
+                }
+
+                resultParagraph.textContent = `${generatedPassword}`;
+            } else {
+                resultParagraph.textContent = '';
+            }
+        }
+
+        copyButton.addEventListener('click', function () {
+            copyToClipboard(resultParagraph.textContent);
+        });
+
+        function copyToClipboard(text) {
+            // Create a temporary element to copy the text
+            const tempElement = document.createElement('textarea');
+            tempElement.value = text;
+
+            // Append the element to the document
+            document.body.appendChild(tempElement);
+
+            // Select the text in the element
+            tempElement.select();
+            tempElement.setSelectionRange(0, 99999); // For mobile devices
+
+            // Copy the selected text
+            document.execCommand('copy');
+
+            // Remove the temporary element
+            document.body.removeChild(tempElement);
+        }
+    </script>
+
+</body>
+
+</html>
